@@ -16,12 +16,7 @@ export default function Home({ countries }) {
   );
 }
 
-export const getServerSideProps = async () => {
-  // SSR을 위해 서버측에서 컴포넌트에게 전달할 데이터를 설정하는 함수
-  // 서버에서만 실행되는 함수. 서버에서만 실행되는 코드를 작성할 수 있음
-  // console.log("getServerSideProps Called!"); // 서버에서 실행되는 함수기 때문에 터미널에 출력됨
-  // window.location < 서버에서 실행되는 함수이기 때문에 window 객체가 없음
-
+export const getStaticProps = async () => {
   const countries = await fetchCountries();
 
   return {
@@ -32,3 +27,7 @@ export const getServerSideProps = async () => {
     },
   };
 };
+
+// 빌드했을 때 흰 동그라미 : 정적 페이지
+// 람다 아이콘 : SSR 방식으로 작동하는 페이지
+// 검은색 동그라미 : SSG방식으로 동작하기는 하지만 getStaticProps가 없는 페이지(데이터 패칭이 필요 없는 페이지)
