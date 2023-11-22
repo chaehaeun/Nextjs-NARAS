@@ -4,9 +4,7 @@ import { fetchCountry } from "@/api";
 
 const Country = ({ country }) => {
   const router = useRouter();
-  const { code } = router.query; // 하이드레이션이 완료된 뒤에 사용할 수 있음
-  // useRouter는 Next.js의 라우팅 시스템에 연결하는 React 훅
-  // 현재 라우트에 대한 정보를 얻을 수 있으며, 클라이언트 사이드에서 사용
+  const { code } = router.query;
 
   return (
     <div>
@@ -19,23 +17,36 @@ export default Country;
 
 Country.Layout = SubLayout;
 
-export const getServerSideProps = async (context) => {
+export const getStaticPaths = async () => {
+  // getStaticPaths는 getStaticProps와 함께 사용되는 메서드로, 동적 라우팅을 위해 필요한 경로 정보를 반환
+
+  return {
+    paths: [
+      {
+        params: {
+          code: "ABW",
+        },
+      },
+      {
+        params: {
+          code: "KOR",
+        },
+      },
+    ],
+    fallback: false, // fallback은 불러올 경로가 없을 때 어떻게 처리할지 설정하는 옵션 : false는 404 페이지를 반환
+  };
+};
+
+export const getStaticProps = async (context) => {
   const { code } = context.params;
-  // getServerSideProps는 context 매개변수를 받으며,
-  // 이 매개변수에는 params, req, res, query 등 서버 사이드 렌더링에 필요한 다양한 정보가 포함
 
   let country = null;
 
   if (code) {
-    country = await fetchCountry(code);
+    country = await fetchCountry(code); // 불러오는 데이터가 시간에 따라 변경되지는 않기 때문에 getServerSideProps보다 getStaticProps를 사용하는 것이 좋음
   }
 
   return {
     props: { country },
   };
 };
-
-// 주요 차이점
-// 실행 시점: useRouter는 클라이언트 사이드에서 실행, getServerSideProps는 서버 사이드에서 실행.
-// 사용 목적: useRouter는 현재 라우트에 대한 정보를 클라이언트 측에서 다룰 때 사용, getServerSideProps는 서버에서 페이지를 렌더링하기 전에 필요한 데이터를 불러올 때 사용
-// 반환 값: useRouter는 라우터 객체를 반환하고, getServerSideProps는 페이지 컴포넌트의 props로 전달될 객체를 반환
