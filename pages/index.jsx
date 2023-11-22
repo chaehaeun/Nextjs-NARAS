@@ -1,40 +1,30 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-export default function Home() {
-  const code = "KOR";
-  const router = useRouter();
+export default function Home({ name }) {
+  console.log("Home Component Called!"); // 서버 콘솔, 클라이언트 콘솔 모두 출력
 
-  const handleClickButton = () => {
-    router.push("/search");
-    // router.push({
-    //   pathname: "/country/[code]",
-    //   query: { code },
-    // });
+  useEffect(() => {
+    console.log("Home Component Mounted!"); // 마운트 시점에 호출되기 때문에 클라이언트 콘솔에만 출력
+  }, []);
 
-    // router.replace("/search"); // 뒤로가기 했을 때 이전 페이지로 돌아가지 않음
-    // router.reload(); // 새로고침 (새로고침을 하지 않으면 쿼리스트링이 변경되어도 페이지가 새로고침 되지 않음)
-  };
-
-  return (
-    <div>
-      Home Page
-      <div>
-        <button onClick={handleClickButton}>Search 페이지로 이동</button>
-      </div>
-      <div>
-        <Link href={"./search"}>Search Page 이동</Link>
-      </div>
-      <div>
-        <Link
-          href={{
-            pathname: "/country/[code]",
-            query: { code },
-          }}
-        >
-          {code} 페이지로 이동
-        </Link>
-      </div>
-    </div>
-  );
+  return <div>{name}</div>;
 }
+
+export const getServerSideProps = async () => {
+  // SSR을 위해 서버측에서 컴포넌트에게 전달할 데이터를 설정하는 함수
+  // 서버에서만 실행되는 함수. 서버에서만 실행되는 코드를 작성할 수 있음
+
+  console.log("getServerSideProps Called!"); // 서버에서 실행되는 함수기 때문에 터미널에 출력됨
+
+  // window.location < 서버에서 실행되는 함수이기 때문에 window 객체가 없음
+
+  return {
+    props: {
+      // props로 전달할 데이터를 설정. 객체 형태로 전달
+
+      name: "KOREA",
+    },
+  };
+};
