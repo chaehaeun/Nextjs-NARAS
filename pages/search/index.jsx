@@ -1,8 +1,25 @@
 import { fetchSearchResults } from "@/api";
+import { useRouter } from "next/router";
 import SubLayout from "@/components/SubLayout/SubLayout";
-import React from "react";
+import { useEffect, useState } from "react";
 
-const SearchPage = ({ countries }) => {
+const SearchPage = () => {
+  const router = useRouter();
+  const { q: query } = router.query;
+
+  const [countries, setCountries] = useState([]);
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      const countries = await fetchSearchResults(query);
+      setCountries(countries);
+    };
+
+    if (query) {
+      fetchCountries();
+    }
+  }, [query]);
+
   return (
     <div>
       {countries.map((country) => (
@@ -15,20 +32,3 @@ const SearchPage = ({ countries }) => {
 export default SearchPage;
 
 SearchPage.Layout = SubLayout; // 객체에 Layout 프로퍼티를 추가하고 SubLayout 컴포넌트를 할당
-
-export const getServerSideProps = async (context) => {
-  const { q: query } = context.query; // 쿼리 스트링을 가져옴
-
-  let countries = [];
-
-  if (query) {
-    // 쿼리 스트링이 있으면
-    countries = await fetchSearchResults(query);
-  }
-
-  return {
-    props: {
-      countries,
-    },
-  };
-};
