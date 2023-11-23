@@ -58,5 +58,6 @@ export const getStaticProps = async (context) => {
 
   return {
     props: { country },
+    revalidate: 3, // ISR 방식으로 동작하도록 설정. 3초마다 캐시를 갱신
   };
 };
