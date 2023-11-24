@@ -1,6 +1,8 @@
 import SubLayout from "@/components/SubLayout/SubLayout";
 import { useRouter } from "next/router";
 import { fetchCountry } from "@/api";
+import style from "./[code].module.css";
+import Image from "next/image";
 
 const Country = ({ country }) => {
   const router = useRouter();
@@ -14,8 +16,39 @@ const Country = ({ country }) => {
   if (!country) return <div>존재하지 않는 국가입니다.</div>;
 
   return (
-    <div>
-      {country.commonName} {country.officialName}
+    <div className={style.container}>
+      <div className={style.header}>
+        <div className={style.commonName}>
+          {country.flagEmoji}&nbsp;{country.commonName}
+        </div>
+        <div className={style.officialName}>{country.officialName}</div>
+      </div>
+
+      <div className={style.flag_img}>
+        <Image
+          fill
+          src={country.flagImg}
+          alt={`${country.commonName}의 국기 이미지입니다`}
+        />
+      </div>
+
+      <div className={style.body}>
+        <div>
+          <b>코드 :</b>&nbsp;{country.code}
+        </div>
+        <div>
+          <b>수도 :</b>&nbsp;{country.capital.join(", ")}
+        </div>
+        <div>
+          <b>지역 :</b>&nbsp;{country.region}
+        </div>
+        <div>
+          <b>지도 :</b>&nbsp;
+          <a target="_blank" href={country.googleMapURL}>
+            {country.googleMapURL}
+          </a>
+        </div>
+      </div>
     </div>
   );
 };
